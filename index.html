@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="Self-Supervised Category-Level Articulated Object Pose Estimation with Part-Level SE(3) Equivariance.">
+  <meta name="keywords" content="Self-supervised learning, SE(3) equivariant network">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Self-Supervised Category-Level Articulated Object Pose Estimation with Part-Level SE(3) Equivariance</title>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-PYVRSFMDRL');
+  </script>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./static/images/favicon.svg">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
+
+<!-- <nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+  <div class="navbar-menu">
+    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
+      <a class="navbar-item" href="https://keunhong.com">
+      <span class="icon">
+          <i class="fas fa-home"></i>
+      </span>
+      </a>
+
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">
+          More Research
+        </a>
+        <div class="navbar-dropdown">
+          <a class="navbar-item" href="https://hypernerf.github.io">
+            HyperNeRF
+          </a>
+          <a class="navbar-item" href="https://nerfies.github.io">
+            Nerfies
+          </a>
+          <a class="navbar-item" href="https://latentfusion.github.io">
+            LatentFusion
+          </a>
+          <a class="navbar-item" href="https://photoshape.github.io">
+            PhotoShape
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</nav> -->
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">Self-Supervised Category-Level Articulated Object Pose Estimation with Part-Level SE(3) Equivariance</h1>
+
+          <!-- authors start -->
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <!-- <a href="https://github.com/Meowuu7">Xueyi Liu</a><sup>1</sup>,</span> -->
+              Xueyi Liu<sup>1</sup>,</span>
+            <span class="author-block">
+              <!-- <a href="https://github.com/xxm19">Xiaomeng Xu</a><sup>1</sup>,</span> -->
+              Ji Zhang<sup>2</sup>,</span>
+            <span class="author-block">
+              <!-- <a href="http://anyirao.com">Anyi Rao</a><sup>2</sup>, -->
+              Ruizhen Hu<sup>3</sup>,</span>
+            </span>
+            <span class="author-block">
+              <!-- <a href="https://people.csail.mit.edu/ganchuang/">Chuang Gan</a><sup>3</sup>, -->
+              Haibin Huang<sup>4</sup>,</span>
+            </span>
+            <span class="author-block">
+              <!-- <a href="https://ericyi.github.io">Li Yi</a><sup>1,4</sup>, -->
+              He Wang<sup>5</sup>,</span>
+            </span>
+            <span class="author-block">
+              <!-- <a href="https://ericyi.github.io">Li Yi</a><sup>1,4</sup>, -->
+              Li Yi<sup>1,6</sup>,</span>
+            </span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>1</sup>Tsinghua University,</span>
+            <span class="author-block"><sup>2</sup>Fudan University,</span>
+            <span class="author-block"><sup>3</sup>Shenzhen University,</span> 
+            <span class="author-block"><sup>4</sup>Kuaishou Technology,</span> 
+            <span class="author-block"><sup>5</sup>Peking University,</span> 
+            <span class="author-block"><sup>6</sup>Shanghai Qi Zhi Institute</span> 
+          </div>
+          <!-- authors end -->
+
+          <!-- arxiv, pdf, code, and other informations -->
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- PDF Link. -->
+              <!-- <span class="link-block">
+                <a href="https://arxiv.org/pdf/2203.06558.pdf"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Paper</span>
+                </a>
+              </span> -->
+              <!-- arXiv link -->
+              <!-- <span class="link-block">
+                <a href="https://arxiv.org/abs/2203.06558"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span> -->
+              <!-- Video Link. -->
+              <!-- <span class="link-block">
+                <a href="https://youtu.be/Z0wqKLgf5ME"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-youtube"></i>
+                  </span>
+                  <span>Video</span>
+                </a>
+              </span> -->
+              <!-- Code Link. -->
+              <!-- <span class="link-block">
+                <a href="https://github.com/Meowuu7/AutoGPart"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                  </a>
+              </span> -->
+              <!-- Openreview link -->
+              <span class="link-block">
+                <a href="https://openreview.net/forum?id=20GtJ6hIaPA"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Openreview</span>
+                </a>
+              </span>
+              <!-- Dataset Link. -->
+              <!-- <span class="link-block">
+                <a href="https://github.com/google/nerfies/releases/tag/0.1"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="far fa-images"></i>
+                  </span>
+                  <span>Data</span>
+                  </a> -->
+            </div>
+
+          </div>
+          <!-- arxiv, pdf, code, and other informations -->
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <video id="teaser" autoplay muted loop height="100%">
+        <source src="figs/teaser.mp4"
+                type="video/mp4">
+      </video>
+      <h2 class="subtitle has-text-centered">
+        <!-- <span class="dnerf"></span>  -->
+        Category-level articulated object pose decomposition  <span style="color: orange; font-weight:bold"> without any annotation </span> with <span style="color: orange; font-weight:bold"> part-level SE(3) equivariance </span>.
+        <!-- AutoGPart <span style="color: orange; font-weight:bold">builds a supervision space and search intermediate supervisions</span>  from it for generalizable 3D part segmentation networks. -->
+      </h2>
+    </div>
+  </div>
+</section>
+
+
+<!-- <section class="hero is-light is-small">
+  <div class="hero-body">
+    <div class="container">
+      <div id="results-carousel" class="carousel results-carousel">
+        <div class="item item-steve">
+          <video poster="" id="steve" autoplay controls muted loop height="100%">
+            <source src="https://homes.cs.washington.edu/~kpar/nerfies/videos/steve.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-chair-tp">
+          <video poster="" id="chair-tp" autoplay controls muted loop height="100%">
+            <source src="https://homes.cs.washington.edu/~kpar/nerfies/videos/chair-tp.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-shiba">
+          <video poster="" id="shiba" autoplay controls muted loop height="100%">
+            <source src="https://homes.cs.washington.edu/~kpar/nerfies/videos/shiba.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-fullbody">
+          <video poster="" id="fullbody" autoplay controls muted loop height="100%">
+            <source src="https://homes.cs.washington.edu/~kpar/nerfies/videos/fullbody.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-blueshirt">
+          <video poster="" id="blueshirt" autoplay controls muted loop height="100%">
+            <source src="https://homes.cs.washington.edu/~kpar/nerfies/videos/blueshirt.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-mask">
+          <video poster="" id="mask" autoplay controls muted loop height="100%">
+            <source src="https://homes.cs.washington.edu/~kpar/nerfies/videos/mask.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-coffee">
+          <video poster="" id="coffee" autoplay controls muted loop height="100%">
+            <source src="https://homes.cs.washington.edu/~kpar/nerfies/videos/coffee.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-toby">
+          <video poster="" id="toby" autoplay controls muted loop height="100%">
+            <source src="https://homes.cs.washington.edu/~kpar/nerfies/videos/toby2.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+  </div>
+</section> -->
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            <!-- Training a generalizable 3D part segmentation network is quite challenging
+            but of great importance in real-world applications. To tackle this problem,
+            some works design task-specific solutions by translating human understanding of
+            the task to machine's learning process, which faces the risk of missing the
+            optimal strategy since machines do not necessarily understand in the exact
+            human way. Others try to use conventional task-agnostic approaches designed for
+            domain generalization problems with no task prior knowledge considered.
+            To solve the above issues, we propose AutoGPart, a generic method enabling training generalizable 3D part
+            segmentation networks with the task prior considered. 
+            <span style="font-weight:bold">AutoGPart builds a supervision space with geometric prior knowledge encoded</span>,
+            and lets the machine to search for the optimal supervisions from the space for
+            a specific segmentation task automatically. 
+            Extensive experiments on
+            three generalizable 3D part segmentation tasks are conducted to demonstrate the
+            effectiveness and versatility of AutoGPart. We demonstrate that the performance
+            of segmentation networks using simple backbones can be significantly improved
+            when trained with supervisions searched by our method. -->
+            Category-level articulated object pose estimation aims to estimate a hierarchy of articulation-aware object poses of an unseen articulated object from a known category. 
+            To reduce the heavy annotations needed for supervised learning methods, we present a novel self-supervised strategy that solves this problem without any human labels. 
+            Our key idea is to factorize canonical shapes and articulated object poses from input articulated shapes through part-level equivariant shape analysis. 
+            Specifically, we first introduce the concept of <span style="font-weight:bold">part-level SE(3) equivariance</span> and devise a network to learn features of such property. 
+            Then, through a carefully designed <span style="font-weight:bold">fine-grained pose-shape disentanglement</span> strategy, we expect that canonical spaces to support pose estimation could be induced automatically. 
+            Thus, we could further predict articulated object poses as per-part rigid transformations describing how parts transform from their canonical part spaces to the camera space. 
+            Extensive experiments demonstrate the effectiveness of our method on both complete and partial point clouds from synthetic and real articulated object datasets.
+          </p>
+        </div>
+      </div>
+    </div>
+    <!--/ Abstract. -->
+
+    <!-- Paper video. -->
+    <!-- <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Video</h2>
+        <div class="publication-video">
+
+          <iframe src="https://www.youtube.com/embed/Z0wqKLgf5ME"
+                  frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
+        
+        
+
+      </div>
+    </div> -->
+    <!--/ Paper video. -->
+  </div>
+</section>
+
+<!-- Problem overview -->
+<section class="section">
+  <div class="container is-max-widescreen">
+    <h2 class="title is-3">Problem Overview</h2>
+    <div class="columns">
+      <div class="column">
+        <p>AutoGPart searches for intermediate supervisions for a generalizable 3D part segmentation network. By training the network with searched features encoding correct part cues, the network could perform better when parsing an instance from a novel distribution. </p>
+      </div>
+    </div>
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-three-fifths">
+        <!-- <video autoplay muted loop width="100%">
+          <source src="figs/groupvit_overview.mp4" type="video/mp4">
+        </video> -->
+        <img src="figs/overview-15.pdf" alt="">
+      </div>
+    </div>
+    
+    <h2 class="title is-3">AutoGPart Architecture</h3>
+    <p> AutoGPart builds an intermediate supervision space based on prior knowledge of 3D segmentation tasks. The space contains all operations to generate supervision features from input geometry features and ground-truth labels. Then, we optimize the supervision space to fit it to a given part segmentation network via a ``propose, evaluate, and update'' approach. In each update cycle, an operation is first sampled to generate supervision features for each point in the shape. Then, it is evaluated by training the network together with the task-related supervision and the intermediate supervision. Finally, a reward value indicating the network's performance evaluated under a cross-validation process is used to update the intermediate supervision space. After that, a greedy search-like approach is performed to extract supervision features from the optimized space for further use.</p>
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-fullwidth">
+        <video autoplay muted loop playsinline controls>
+          <source src="figs/website-source-method.mp4" type="video/mp4">
+        </video>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<section>
+  <div class="container is-max-widescreen">
+    <h2 class="title is-3">Searched Intermediate Supervisions</h2>
+      <div class="columns">
+        <div class="column">
+          <p>
+            We plot an intermediate supervision feature searched by AutoGPart for the Primitive Fitting task on shapes from training domains and test domains. Compared to ground-truth segmentations (as well as their possible variations), features searched by our strategy present some patterns more friendly for a network to learn (e.g. discriminative across different parts, while changes continuously in a single part).
+          </p>
+        </div>
+      </div>
+
+      <h3 class="title is-4">Primitive Fitting</h3>
+        <video autoplay muted loop playsinline width="100%">
+          <source src="figs/website-source-searched-features.mp4" type="video/mp4">
+        </video>
+
+      <details>
+        <summary class="title is-6 button">Click here for more examples on Primitive Fitting.</summary>
+        <video autoplay muted loop playsinline width="100%">
+          <source src="figs/website-source-more-example-prim.mp4" type="video/mp4">
+        </video>
+      </details>
+
+      <h3 class="title is-4">Mobility-based Part Segmentation</h3>
+        <video autoplay muted loop playsinline width="100%">
+          <source src="figs/website-source-searched-features-motion.mp4" type="video/mp4">
+        </video>
+
+        <details>
+          <summary class="title is-6 button">Click here for more examples on Mobility-based Part Segmentation.</summary>
+          <video autoplay muted loop playsinline width="100%">
+            <source src="figs/website-source-more-example-motion.mp4" type="video/mp4">
+          </video>
+        </details>
+
+        <h3 class="title is-4">Semantic-based Part Segmentation</h3>
+        <video autoplay muted loop playsinline width="100%">
+          <source src="figs/website-source-searched-features-inst.mp4" type="video/mp4">
+        </video>
+  </div>
+</section>
+
+
+<section class="hero is-small">
+  <div class="hero-body">
+  <div class="container is-max-widescreen">
+    <h2 class="title is-3">Results</h2>
+    <div class="columns">
+      <div class="column">
+        <p>We evaluate AutoGPart on three part segmentation tasks, namely Mobility-based Part Segmentation, Primitive Fitting, and Semantic-based Part Segmentation. The generalizability of part segmentation networks could be improved by when trained together with intermediate supervisions searched by our method. 
+           <!-- GroupViT on Pascal VOC, Pascal Context, and COCO datasets. GroupViT is not trained on any semantic segmentation annotation, and yet could zero-shot transfer to semantic segmentation classes of any dataset without fine-tuning.  -->
+          </p>
+      </div>
+    </div>
+    <video autoplay muted loop playsinline width="100%">
+      <source src="figs/website-source-seg-res-all.mp4" type="video/mp4">
+    </video>
+  </div>
+  </div>
+</section>
+
+
+
+<footer class="footer">
+  <div class="container">
+
+    <!-- arxiv and code linke here -->
+    <!-- <div class="content has-text-centered">
+      <a class="icon-link"
+         href="https://arxiv.org/pdf/2203.06558.pdf">
+        <i class="fas fa-file-pdf"></i>
+      </a>
+      <a class="icon-link" href="https://github.com/Meowuu7/AutoGPart" class="external-link" disabled>
+        <i class="fab fa-github"></i>
+      </a>
+    </div> -->
+    <!-- arxiv and code linke here -->
+
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            The template is borrowed from <a
+            href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
